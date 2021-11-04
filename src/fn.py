@@ -29,6 +29,6 @@ def build_response(code, body):
 
 def handler(event, context):
     output = build_response(200, json.dumps(event))
-    print(json.dumps({"message": "updated hello world!"}))
+    # print(json.dumps(context.client_context))
     print(json.dumps(output))
     return output
