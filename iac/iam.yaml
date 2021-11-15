@@ -91,6 +91,7 @@ Resources:
                   - logs:PutLogEvents
                   - logs:PutRetentionPolicy
                   - logs:DescribeLogStreams
+                  - logs:DeleteLogGroup
                 Resource: 'arn:aws:logs:*:*:log-group:*:*'
         - PolicyName: lambda-read
           PolicyDocument:
