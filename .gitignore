@@ -1,6 +1,7 @@
 # directories
 .vscode
 etc
+layer
 tmp
 
 # files

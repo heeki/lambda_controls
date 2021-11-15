@@ -132,6 +132,9 @@ Resources:
                     lambda:Layer:
                       - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:*:*'
                       - 'arn:aws:lambda:us-east-1:580247275435:layer:LambdaInsightsExtension:*'
+                  # ForAllValues:StringNotLike:
+                  #   lambda:Layer:
+                  #     - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:boto3-1-20-6:*'
         - PolicyName: lambda-develop-layer
           PolicyDocument:
             Version: '2012-10-17'
@@ -140,7 +143,10 @@ Resources:
                 Action:
                   - lambda:DeleteLayerVersion
                   - lambda:GetLayerVersion
+                  - lambda:GetLayerVersionPolicy
                   - lambda:PublishLayerVersion
+                  - lambda:AddLayerVersionPermission
+                  - lambda:RemoveLayerVersionPermission
                 Resource: '*'
         - PolicyName: lambda-develop-mapping
           PolicyDocument:

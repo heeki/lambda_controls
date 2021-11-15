@@ -26,3 +26,9 @@ xacct.package:
 	sam package --profile ${PROFILE_XACCT} -t ${XACCT_TEMPLATE} --output-template-file ${XACCT_OUTPUT} --s3-bucket ${S3BUCKET_XACCT}
 xacct.deploy:
 	sam deploy --profile ${PROFILE_XACCT} -t ${XACCT_OUTPUT} --stack-name ${XACCT_STACK} --parameter-overrides ${XACCT_PARAMS} --capabilities CAPABILITY_NAMED_IAM
+
+layer: layer.package layer.deploy
+layer.package:
+	sam package -t ${LAYER_TEMPLATE} --output-template-file ${LAYER_OUTPUT} --s3-bucket ${S3BUCKET}
+layer.deploy:
+	sam deploy -t ${LAYER_OUTPUT} --stack-name ${LAYER_STACK} --parameter-overrides ${LAYER_PARAMS} --role-arn ${O_CFN_ROLE} --capabilities CAPABILITY_NAMED_IAM
