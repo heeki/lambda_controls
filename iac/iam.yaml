@@ -72,7 +72,9 @@ Resources:
               - Effect: Allow
                 Action:
                   - s3:*
-                Resource: 'arn:aws:s3:::higs-serverless/*'
+                Resource:
+                  - 'arn:aws:s3:::higs-serverless/*'
+                  - 'arn:aws:s3:::higs-serverless-versioned/*'
         - PolicyName: cloudwatch-insights
           PolicyDocument:
             Version: '2012-10-17'

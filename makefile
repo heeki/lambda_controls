@@ -12,6 +12,7 @@ lambda.package:
 lambda.deploy:
 	sam deploy -t ${LAMBDA_OUTPUT} --stack-name ${LAMBDA_STACK} --parameter-overrides ${LAMBDA_PARAMS} --role-arn ${O_CFN_ROLE} --capabilities CAPABILITY_NAMED_IAM
 
+
 lambda.local:
 	sam local invoke -t ${LAMBDA_TEMPLATE} --parameter-overrides ${LAMBDA_PARAMS} --env-vars etc/envvars.json -e etc/event.json Fn | jq
 lambda.invoke.sync:
@@ -28,7 +29,12 @@ xacct.deploy:
 	sam deploy --profile ${PROFILE_XACCT} -t ${XACCT_OUTPUT} --stack-name ${XACCT_STACK} --parameter-overrides ${XACCT_PARAMS} --capabilities CAPABILITY_NAMED_IAM
 
 layer: layer.package layer.deploy
+lambda.prepare:
+	rm -rf layer && mkdir -p layer/python && pip install boto3 -t layer/python
 layer.package:
 	sam package -t ${LAYER_TEMPLATE} --output-template-file ${LAYER_OUTPUT} --s3-bucket ${S3BUCKET}
 layer.deploy:
 	sam deploy -t ${LAYER_OUTPUT} --stack-name ${LAYER_STACK} --parameter-overrides ${LAYER_PARAMS} --role-arn ${O_CFN_ROLE} --capabilities CAPABILITY_NAMED_IAM
+layer.signed: layer.package.signed layer.deploy
+layer.package.signed:
+	sam package -t ${LAYER_TEMPLATE} --output-template-file ${LAYER_OUTPUT} --s3-bucket ${S3VERSIONED} --signing-profiles ${SIGNING_PROFILES}
