@@ -1,9 +1,9 @@
 # directories
 .vscode
-etc
 layer
 tmp
 
 # files
+etc/environment.sh
 iac/*_output.yaml
 notes.md

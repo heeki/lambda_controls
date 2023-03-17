@@ -1,14 +1,13 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Testing Lambda controls
+Description: Function for Lambda controls
 Transform: AWS::Serverless-2016-10-31
 Globals:
   Function:
     Layers:
       # layers in the account are allowed
       # layers not in the account are forbidden
-      - 'arn:aws:lambda:us-east-1:546275881527:layer:xray-python3:1'
-      # layers in the us-east-1, 580247275435, LambdaInsightsExtension:* are allowed
-      # - 'arn:aws:lambda:us-east-1:580247275435:layer:LambdaInsightsExtension:14'
+      # layers in any region from 580247275435 named LambdaInsightsExtension:* are allowed (when signing is not enabled)
+      # - 'arn:aws:lambda:us-east-1:580247275435:layer:LambdaInsightsExtension:21'
       # layer that will have access removed
       - !Ref pLayerArn
     MemorySize: !Ref pFnMemory
@@ -21,6 +20,8 @@ Parameters:
   pFnTimeout:
     Type: Number
   pLayerArn:
+    Type: String
+  pSigningConfigArn:
     Type: String
 Resources:
   # Lambda
@@ -74,6 +75,7 @@ Resources:
       CodeUri: ../src
       Handler: fn.handler
       Role: !GetAtt FnRole.Arn
+      CodeSigningConfigArn: !Ref pSigningConfigArn
   FnLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:

@@ -1,25 +1,27 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Testing Lambda controls
+Description: Layer for Lambda controls
 Transform: AWS::Serverless-2016-10-31
 Parameters:
+  pName:
+    Type: String
   pDescription:
     Type: String
 Resources:
-  LayerBoto3:
+  LayerXray:
     Type: AWS::Serverless::LayerVersion
     Properties:
       CompatibleRuntimes:
         - python3.8
         - python3.9
-      ContentUri: ../layer
-      LayerName: boto3
+      ContentUri: ../tmp/layer
+      LayerName: !Ref pName
       Description: !Ref pDescription
-  LayerBoto3Permission:
+  LayerXrayPermission:
     Type: AWS::Lambda::LayerVersionPermission
     Properties:
       Action: lambda:GetLayerVersion
-      LayerVersionArn: !Ref LayerBoto3
+      LayerVersionArn: !Ref LayerXray
       Principal: !Ref AWS::AccountId
 Outputs:
-  outLayerBoto3:
-    Value: !Ref LayerBoto3
+  outLayerXray:
+    Value: !Ref LayerXray

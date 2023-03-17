@@ -1,6 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Testing Lambda controls - IAM
+Description: Deployment IAM role for Lambda controls
 Transform: AWS::Serverless-2016-10-31
+Parameters:
+  pBucket:
+    Type: String
 Resources:
   CfnRole:
     Type: AWS::IAM::Role
@@ -73,8 +76,8 @@ Resources:
                 Action:
                   - s3:*
                 Resource:
-                  - 'arn:aws:s3:::higs-serverless/*'
-                  - 'arn:aws:s3:::higs-serverless-versioned/*'
+                  - !Sub 'arn:aws:s3:::${pBucket}/*'
+                  - !Sub 'arn:aws:s3:::${pBucket}-versioned/*'
         - PolicyName: cloudwatch-insights
           PolicyDocument:
             Version: '2012-10-17'
@@ -95,6 +98,15 @@ Resources:
                   - logs:DescribeLogStreams
                   - logs:DeleteLogGroup
                 Resource: 'arn:aws:logs:*:*:log-group:*:*'
+        - PolicyName: signer
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - signer:GetSigningProfile
+                  - signer:PutSigningProfile
+                Resource: "*"
         - PolicyName: lambda-read
           PolicyDocument:
             Version: '2012-10-17'
@@ -118,6 +130,18 @@ Resources:
               - Effect: Allow
                 Action:
                   - lambda:DeleteFunction
+                  - lambda:TagResource
+                Resource: '*'
+        - PolicyName: lambda-signing
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:CreateCodeSigningConfig
+                  - lambda:DeleteCodeSigningConfig
+                  - lambda:GetCodeSigningConfig
+                  - lambda:UpdateCodeSigningConfig
                 Resource: '*'
         - PolicyName: lambda-develop-function
           PolicyDocument:
@@ -133,10 +157,11 @@ Resources:
                   ForAllValues:StringLike:
                     lambda:Layer:
                       - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:*:*'
-                      - 'arn:aws:lambda:us-east-1:580247275435:layer:LambdaInsightsExtension:*'
+                      - !Sub 'arn:aws:lambda:${AWS::Region}:580247275435:layer:LambdaInsightsExtension:*'
+                  # for layers we want to disable
                   # ForAllValues:StringNotLike:
                   #   lambda:Layer:
-                  #     - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:boto3-1-20-6:*'
+                  #     - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:boto3:*'
         - PolicyName: lambda-develop-layer
           PolicyDocument:
             Version: '2012-10-17'
